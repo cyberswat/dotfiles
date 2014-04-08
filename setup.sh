@@ -36,6 +36,14 @@ function install_ohmyzsh {
   ln -s $HOME/dotfiles/files/.zshrc $HOME/.zshrc
 }
 
+function install_packer {
+  mkdir -p $HOME/packer
+  cd $HOME/packer
+  wget https://dl.bintray.com/mitchellh/packer/0.5.2_linux_amd64.zip
+  unzip 0.5.2_linux_amd64.zip
+  rm -f 0.5.2_linux_amd64.zip
+}
+
 function install_sourcecodepro {
   rm -f SourceCodePro_FontsOnly-1.01*
   wget http://downloads.sourceforge.net/project/sourcecodepro.adobe/SourceCodePro_FontsOnly-1.017.zip
@@ -85,6 +93,26 @@ function install_sublimetext {
   fi
 }
 
+function install_vagrant {
+  TEMPFILE=$(mktemp)
+  wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.5.2_x86_64.deb -O $TEMPFILE
+  sudo dpkg -i $TEMPFILE
+  rm $TEMPFILE
+}
+
+function install_vmwareworkstation {
+  TEMPFILE=$(mktemp)
+  wget http://www.vmware.com/go/tryworkstation-linux-64 -O $TEMPFILE
+  sudo sh $TEMPFILE
+  rm $TEMPFILE
+  if type "vagrant" > /dev/null; then
+    vagrant plugin install vagrant-vmware-workstation
+    echo "You should have received an email with a license download link for the vagrant vmware seat."
+    read -e -p "vagrant-vmware-workstation license.lic file absolute path: " LIC
+    vagrant plugin license vagrant-vmware-workstation $LIC
+  fi
+}
+
 function install_everything {
   do_updates
   install_fixubuntu
@@ -92,15 +120,18 @@ function install_everything {
   install_git
   install_hipchat
   install_ohmyzsh
+  install_packer
   install_rvm
   install_sshkey
   install_sourcecodepro
   install_sublimetext
+  install_vagrant
+  install_vmwareworkstation
 }
 
 echo "What would you like to install?"
-select abcdefghijkl in "everything" "buildtools" "doupdates" "fixubuntu" "git" "gnometweaktool" "hipchat" "ohmyzsh" "rvm" "sshkey" "sourcecodepro" "sublimetext3"; do
-  case $abcdefghijkl in
+select abcdefghijklmno in "everything" "buildtools" "doupdates" "fixubuntu" "git" "gnometweaktool" "hipchat" "ohmyzsh" "packer" "rvm" "sshkey" "sourcecodepro" "sublimetext3" "vagrant" "vmwareworkstation"; do
+  case $abcdefghijklmno in
     everything ) install_everything;  break;;
     buildtools ) install_buildtools; break;;
     doupdates ) do_updates; break;;
@@ -109,10 +140,13 @@ select abcdefghijkl in "everything" "buildtools" "doupdates" "fixubuntu" "git" "
     gnometweaktool ) install_gnometweaktool; break;;
     hipchat ) install_hipchat; break;;
     ohmyzsh ) install_ohmyzsh; break;;
+    packer ) install_packer; break;;
     rvm ) install_rvm; break;;
     sshkey ) install_sshkey; break;;
     sourcecodepro ) install_sourcecodepro; break;;
     sublimetext3 ) install_sublimetext; break;;
+    vagrant ) install_vagrant; break;;
+    vmwareworkstation ) install_vmwareworkstation; break;;
   esac
 done
 echo
