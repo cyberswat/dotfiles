@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -x
+apt-get update && apt-get upgrade
 
 function install_sublimetext {
   if [ ! -f /usr/bin/subl ]; then
@@ -12,17 +13,36 @@ function install_sublimetext {
 }
 
 function install_git {
-  apt-get update
   sudo apt-get install git
   ln -s $HOME/dotfiles/files/.gitconfig $HOME/.gitconfig
 }
 
-function install_build {
-  apt-get update
-  sudo apt-get install build-essential checkinstall
-}
 
-function install_ssh_cert {
+
+
+echo "Do you want to apply the changes from https://fixubuntu.com/?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) wget -q -O - https://fixubuntu.com/fixubuntu.sh | bash; break;;
+        No ) break;;
+    esac
+done
+echo
+
+if dpkg --get-selections | grep -q "^git$" >/dev/null; then
+  echo "Git is installed."
+else
+  echo "Do you want to install git?"
+  select yn in "Yes" "No"; do
+    case $yn in
+      Yes ) install_git; break;;
+      No ) break;;
+    esac
+  done
+  echo 
+fi
+
+function install_ssh_key {
   echo "Enter your email:   "
   read EMAIL
   echo
@@ -40,38 +60,14 @@ function install_ssh_cert {
 
   ssh-keygen -t rsa -C "$EMAIL"
 }
-
-
-echo "Do you want to apply the changes from https://fixubuntu.com/?"
+echo "Do you want to generate a new ssh key?"
 select yn in "Yes" "No"; do
     case $yn in
-        Yes ) wget -q -O - https://fixubuntu.com/fixubuntu.sh | bash; break;;
+        Yes ) install_ssh_key; break;;
         No ) break;;
     esac
 done
-echo ""
-
-if dpkg --get-selections | grep -q "^git$" >/dev/null; then
-  echo "Git is installed."
-else
-  echo "Do you want to install git?"
-  select yn in "Yes" "No"; do
-    case $yn in
-      Yes ) install_git; break;;
-      No ) break;;
-    esac
-  done
-  echo ""
-fi
-
-echo "Do you want to generate a new ssh key for services like github?"
-select yn in "Yes" "No"; do
-    case $yn in
-        Yes ) install_ssh_cert; break;;
-        No ) break;;
-    esac
-done
-echo ""
+echo
 
 echo "Do you want to install Sublime Text 3?"
 select yn in "Yes" "No"; do
@@ -80,13 +76,56 @@ select yn in "Yes" "No"; do
     No ) break;;
   esac
 done
-echo ""
+echo
 
-echo "Do you want to install build essentials?"
+echo "Do you want to install build essentials and checkinstall?"
 select yn in "Yes" "No"; do
   case $yn in
-    Yes ) install_build; break;;
+    Yes ) sudo apt-get install build-essential checkinstall; break;;
     No ) break;;
   esac
 done
-echo ""
+echo
+
+
+function install_source_code_pro {
+  rm -f SourceCodePro_FontsOnly-1.01*
+  wget http://downloads.sourceforge.net/project/sourcecodepro.adobe/SourceCodePro_FontsOnly-1.017.zip
+  unzip SourceCodePro_FontsOnly-1.017.zip
+  sudo mkdir -p /usr/share/fonts/custom
+  ls -l SourceCodePro_FontsOnly-1.017/OTF/
+  sudo cp SourceCodePro_FontsOnly-1.017/OTF/*.otf /usr/share/fonts/custom/
+  rm -rf SourceCodePro_FontsOnly-1.017*
+  sudo fc-cache -f -v
+  echo "Do you install the gnome-tweak-tool to set the default system fonts?"
+  select yn in "Yes" "No"; do
+    case $yn in
+      Yes ) sudo apt-get install gnome-tweak-tool && gnome-tweak-tool; break;;
+      No ) break;;
+    esac
+  done
+  echo
+}
+echo "Do you want to install Adobes Source Code Pro Font?"
+select yn in "Yes" "No"; do
+  case $yn in
+    Yes ) install_source_code_pro; break;;
+    No ) break;;
+  esac
+done
+echo
+
+function install_ohmyzsh {
+  sudo apt-get install zsh
+  wget --no-check-certificate http://install.ohmyz.sh -O - | sh
+  rm -f ~/.zshrc
+  ln -s $HOME/dotfiles/files/.zshrc $HOME/.zshrc
+}
+echo "Do you want to install zsh/Oh-My-Zsh?"
+select yn in "Yes" "No"; do
+  case $yn in
+    Yes ) install_ohmyzsh; break;;
+    No ) break;;
+  esac
+done
+echo
