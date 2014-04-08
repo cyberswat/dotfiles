@@ -1,7 +1,12 @@
 #!/bin/bash -x
 
+function do_updates {
+  sudo apt-get update && sudo apt-get upgrade
+}
+
+
 function install_buildtools {
-  sudo apt-get install build-essential checkinstall
+  sudo apt-get install build-essential checkinstall curl
 }
 
 function install_fixubuntu {
@@ -61,6 +66,14 @@ function install_sshkey {
   ssh-keygen -t rsa -C "$EMAIL"
 }
 
+function install_rvm {
+  install_buildtools
+  curl -sSL https://get.rvm.io | bash -s stable
+  rvm install 2.1 --auto-dotfiles
+  rvm --default use 2.1
+  echo "If you see the error 'RVM is not a function, selecting rubies with rvm use ... will not work' ... visit https://rvm.io/integration/gnome-terminal. If you do not have ruby after a restart, run rvm --default use 2.1"
+}
+
 function install_sublimetext {
   if [ ! -f /usr/bin/subl ]; then
     TEMPFILE=$(mktemp)
@@ -73,28 +86,30 @@ function install_sublimetext {
 }
 
 function install_everything {
+  do_updates
   install_fixubuntu
   install_buildtools
   install_git
   install_hipchat
   install_ohmyzsh
+  install_rvm
   install_sshkey
   install_sourcecodepro
   install_sublimetext
 }
 
-sudo apt-get update
-
 echo "What would you like to install?"
-select abcdefghij in "everything" "buildtools" "fixubuntu" "git" "gnometweaktool" "hipchat" "ohmyzsh" "sshkey" "sourcecodepro" "sublimetext3"; do
-  case $abcdefghij in
+select abcdefghijkl in "everything" "buildtools" "doupdates" "fixubuntu" "git" "gnometweaktool" "hipchat" "ohmyzsh" "rvm" "sshkey" "sourcecodepro" "sublimetext3"; do
+  case $abcdefghijkl in
     everything ) install_everything;  break;;
     buildtools ) install_buildtools; break;;
+    doupdates ) do_updates; break;;
     fixubuntu ) install_fixubuntu; break;;
     git ) install_git; break;;
     gnometweaktool ) install_gnometweaktool; break;;
     hipchat ) install_hipchat; break;;
     ohmyzsh ) install_ohmyzsh; break;;
+    rvm ) install_rvm; break;;
     sshkey ) install_sshkey; break;;
     sourcecodepro ) install_sourcecodepro; break;;
     sublimetext3 ) install_sublimetext; break;;
