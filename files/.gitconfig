@@ -1,0 +1,7 @@
+[user]
+	name = Kevin Bridges
+	email = kevin@cyberswat.com
+[branch]
+	autosetuprebase = always
+[help]
+	autocorrect = 1
