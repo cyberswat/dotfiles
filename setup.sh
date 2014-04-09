@@ -6,7 +6,7 @@ function do_updates {
 
 
 function install_buildtools {
-  sudo apt-get install build-essential checkinstall curl
+  sudo apt-get install build-essential checkinstall curl libxslt-dev libxml2-dev
 }
 
 function install_fixubuntu {
@@ -34,6 +34,7 @@ function install_ohmyzsh {
   wget --no-check-certificate http://install.ohmyz.sh -O - | sh
   rm -f ~/.zshrc
   ln -s $HOME/dotfiles/files/.zshrc $HOME/.zshrc
+  . ~/.zshrc
 }
 
 function install_packer {
@@ -77,20 +78,19 @@ function install_sshkey {
 function install_rvm {
   install_buildtools
   curl -sSL https://get.rvm.io | bash -s stable
-  rvm install 2.1 --auto-dotfiles
+  rvm install 2.1
   rvm --default use 2.1
-  echo "If you see the error 'RVM is not a function, selecting rubies with rvm use ... will not work' ... visit https://rvm.io/integration/gnome-terminal. If you do not have ruby after a restart, run rvm --default use 2.1"
+  echo "If you see the error 'RVM is not a function, selecting rubies with rvm use ... will not work' ... visit https://rvm.io/integration/gnome-terminal."
 }
 
 function install_sublimetext {
-  if [ ! -f /usr/bin/subl ]; then
-    TEMPFILE=$(mktemp)
-    wget http://c758482.r82.cf2.rackcdn.com/sublime-text_build-3059_amd64.deb -O $TEMPFILE
-    sudo dpkg -i $TEMPFILE
-    rm $TEMPFILE
-  else
-    echo "Sublime Text appears to be installed ... skipping."
-  fi
+  TEMPFILE=$(mktemp)
+  wget http://c758482.r82.cf2.rackcdn.com/sublime-text_build-3059_amd64.deb -O $TEMPFILE
+  sudo dpkg -i $TEMPFILE
+  rm $TEMPFILE
+  rm -f 
+  mkdir -p $HOME/.config/sublime-text-3/Packages/User
+  ln -s $HOME/dotfiles/files/Preferences.sublime-settings $HOME/.config/sublime-text-3/Packages/User/Preferences.sublime-settings
 }
 
 function install_vagrant {
