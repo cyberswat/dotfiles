@@ -63,3 +63,6 @@ export VAGRANT_DEFAULT_PROVIDER=vmware_workstation
 if [[ -r ~/.zshrcprivate ]]; then
     source ~/.zshrcprivate
 fi
+
+export DATA_BAGS_PATH=$HOME/nmd-chef/data_bags
+export KITCHEN_LOG="debug"
