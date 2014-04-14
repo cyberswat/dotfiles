@@ -66,3 +66,6 @@ fi
 
 export DATA_BAGS_PATH=$HOME/nmd-chef/data_bags
 export KITCHEN_LOG="debug"
+
+# added by travis gem
+[ -f /home/cyberswat/.travis/travis.sh ] && source /home/cyberswat/.travis/travis.sh

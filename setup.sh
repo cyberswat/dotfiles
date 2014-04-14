@@ -26,7 +26,7 @@ function install_hipchat {
   sudo sh -c 'echo "deb http://downloads.hipchat.com/linux/apt stable main" > /etc/apt/sources.list.d/atlassian-hipchat.list'
   wget -O - https://www.hipchat.com/keys/hipchat-linux.key | sudo apt-key add -
   sudo apt-get update
-  sudo apt-get install hipchat 
+  sudo apt-get install hipchat
 }
 
 function install_ohmyzsh {
@@ -43,6 +43,10 @@ function install_packer {
   wget https://dl.bintray.com/mitchellh/packer/0.5.2_linux_amd64.zip
   unzip 0.5.2_linux_amd64.zip
   rm -f 0.5.2_linux_amd64.zip
+}
+
+function install_pyyaml {
+  sudo apt-get install python-yaml
 }
 
 function install_sourcecodepro {
@@ -63,7 +67,7 @@ function install_sshkey {
   echo "Confirm your email: "
   read EMAILCONFIRM
   echo
-  while [ "$EMAIL" != "$EMAILCONFIRM" ]; do 
+  while [ "$EMAIL" != "$EMAILCONFIRM" ]; do
     echo "Enter your email:   "
     read EMAIL
     echo
@@ -88,7 +92,7 @@ function install_sublimetext {
   wget http://c758482.r82.cf2.rackcdn.com/sublime-text_build-3059_amd64.deb -O $TEMPFILE
   sudo dpkg -i $TEMPFILE
   rm $TEMPFILE
-  rm -f 
+  rm -f
   mkdir -p $HOME/.config/sublime-text-3/Packages/User
   ln -s $HOME/dotfiles/files/Preferences.sublime-settings $HOME/.config/sublime-text-3/Packages/User/Preferences.sublime-settings
 }
@@ -121,6 +125,7 @@ function install_everything {
   install_hipchat
   install_ohmyzsh
   install_packer
+  install_pyyaml
   install_rvm
   install_sshkey
   install_sourcecodepro
@@ -130,8 +135,8 @@ function install_everything {
 }
 
 echo "What would you like to install?"
-select abcdefghijklmno in "everything" "buildtools" "doupdates" "fixubuntu" "git" "gnometweaktool" "hipchat" "ohmyzsh" "packer" "rvm" "sshkey" "sourcecodepro" "sublimetext3" "vagrant" "vmwareworkstation"; do
-  case $abcdefghijklmno in
+select abcdefghijklmnop in "everything" "buildtools" "doupdates" "fixubuntu" "git" "gnometweaktool" "hipchat" "ohmyzsh" "packer" "pyYaml" "rvm" "sshkey" "sourcecodepro" "sublimetext3" "vagrant" "vmwareworkstation"; do
+  case $abcdefghijklmnop in
     everything ) install_everything;  break;;
     buildtools ) install_buildtools; break;;
     doupdates ) do_updates; break;;
@@ -141,6 +146,7 @@ select abcdefghijklmno in "everything" "buildtools" "doupdates" "fixubuntu" "git
     hipchat ) install_hipchat; break;;
     ohmyzsh ) install_ohmyzsh; break;;
     packer ) install_packer; break;;
+    pyYaml ) install_pyyaml; break;;
     rvm ) install_rvm; break;;
     sshkey ) install_sshkey; break;;
     sourcecodepro ) install_sourcecodepro; break;;
